@@ -3,7 +3,7 @@ WORKDIR /workspace
 COPY pom.xml .
 COPY src ./src
 RUN mvn --batch-mode -DskipTests package \
-    && cp target/common-library-1.0.0.jar /app.jar
+    && cp target/common-library-1.0.0-exec.jar /app.jar
 
 FROM eclipse-temurin:25-jre-alpine
 WORKDIR /app
