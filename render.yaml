@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: common-library
+    runtime: docker
+    plan: free
+    healthCheckPath: /actuator/health
+    envVars:
+      - key: API_KEY
+        sync: false
+      - key: JWT_SECRET
+        sync: false

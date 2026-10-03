@@ -27,6 +27,15 @@ mvn spring-boot:run
 
 The service can also be packaged as an executable JAR with `mvn package`.
 
+## Deploy to Render
+
+Create a Blueprint in Render from this repository. The `render.yaml` config
+builds the standalone Docker service and uses `/actuator/health` for health
+checks. When prompted, set `API_KEY` to a private value of at least 32 bytes
+and `JWT_SECRET` to a Base64-encoded secret that decodes to at least 32 bytes.
+For example, generate values with `openssl rand -hex 32` and
+`openssl rand -base64 32`. Do not use the development defaults in Render.
+
 ## API
 
 All API requests require the `X-API-Key` header. The health check at
