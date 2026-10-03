@@ -24,6 +24,9 @@ public class JwtService {
         if (bytes.length < 32) {
             throw new IllegalArgumentException("security.jwt.secret must decode to at least 32 bytes");
         }
+        if (expirationSeconds <= 0) {
+            throw new IllegalArgumentException("security.jwt.expiration-seconds must be positive");
+        }
         this.key = Keys.hmacShaKeyFor(bytes);
         this.expirationSeconds = expirationSeconds;
     }
@@ -43,9 +46,17 @@ public class JwtService {
         return UUID.fromString(claims(token).getSubject());
     }
 
+    public String email(String token) {
+        return claims(token).get("email", String.class);
+    }
+
     public boolean isValid(String token) {
         try {
-            claims(token);
+            String subject = claims(token).getSubject();
+            if (subject == null) {
+                return false;
+            }
+            UUID.fromString(subject);
             return true;
         } catch (io.jsonwebtoken.JwtException | IllegalArgumentException exception) {
             return false;
