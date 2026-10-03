@@ -16,12 +16,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest(properties = {
-        "security.api-key=test-api-key-for-token-service",
+        "security.api-key=test-api-key-for-token-service-32-bytes",
         "security.jwt.secret=AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="
 })
 @AutoConfigureMockMvc
 class TokenControllerTest {
-    private static final String API_KEY = "test-api-key-for-token-service";
+    private static final String API_KEY = "test-api-key-for-token-service-32-bytes";
 
     @Autowired
     private MockMvc mockMvc;
@@ -65,5 +65,17 @@ class TokenControllerTest {
                 .andExpect(jsonPath("$.valid").value(true))
                 .andExpect(jsonPath("$.userId").value(userId))
                 .andExpect(jsonPath("$.email").value("user@example.com"));
+    }
+
+    @Test
+    void reportsInvalidTokensWithoutExposingParserErrors() throws Exception {
+        mockMvc.perform(post("/api/tokens/validate")
+                        .header("X-API-Key", API_KEY)
+                        .contentType("application/json")
+                        .content("""
+                                {"token":"not-a-jwt"}
+                                """))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.valid").value(false));
     }
 }

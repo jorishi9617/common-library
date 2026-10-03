@@ -17,16 +17,17 @@ public class ApiKeyFilter extends OncePerRequestFilter {
     private final byte[] configuredApiKey;
 
     public ApiKeyFilter(@Value("${security.api-key}") String apiKey) {
-        if (apiKey.isBlank()) {
-            throw new IllegalArgumentException("security.api-key must not be blank");
+        byte[] apiKeyBytes = apiKey.getBytes(StandardCharsets.UTF_8);
+        if (apiKey.isBlank() || apiKeyBytes.length < 32) {
+            throw new IllegalArgumentException("security.api-key must be at least 32 bytes");
         }
-        this.configuredApiKey = apiKey.getBytes(StandardCharsets.UTF_8);
+        this.configuredApiKey = apiKeyBytes;
     }
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getRequestURI().substring(request.getContextPath().length());
-        return path.startsWith("/actuator/health");
+        return path.equals("/actuator/health") || path.startsWith("/actuator/health/");
     }
 
     @Override

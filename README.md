@@ -10,7 +10,7 @@ Set these environment variables before starting the service:
 
 | Variable | Description |
 | --- | --- |
-| `API_KEY` | Shared secret sent in the `X-API-Key` header |
+| `API_KEY` | Shared secret of at least 32 bytes sent in the `X-API-Key` header |
 | `JWT_SECRET` | Base64-encoded signing secret that decodes to at least 32 bytes |
 | `JWT_EXPIRATION_SECONDS` | Token lifetime in seconds (default: `900`) |
 | `PORT` | HTTP port (default: `8080`) |
@@ -20,6 +20,8 @@ Set these environment variables before starting the service:
 With Java 25 and Maven installed:
 
 ```sh
+export API_KEY="$(openssl rand -hex 32)"
+export JWT_SECRET="$(openssl rand -base64 32)"
 mvn spring-boot:run
 ```
 
